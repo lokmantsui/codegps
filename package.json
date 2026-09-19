@@ -1,0 +1,74 @@
+{
+  "name": "codegps",
+  "displayName": "codegps",
+  "description": "GPS for code: trace data flow between two points with an LLM, save and reuse the path.",
+  "version": "0.0.1",
+  "publisher": "codegps",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codegps",
+          "title": "codegps",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codegps": [
+        {
+          "id": "codegps.panel",
+          "name": "Trace",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codegps.setStart",
+        "title": "codegps: Set Start at Cursor"
+      },
+      {
+        "command": "codegps.setEnd",
+        "title": "codegps: Set End at Cursor"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "codegps.setStart", "group": "codegps@1", "when": "editorTextFocus" },
+        { "command": "codegps.setEnd", "group": "codegps@2", "when": "editorTextFocus" }
+      ]
+    },
+    "configuration": {
+      "title": "codegps",
+      "properties": {
+        "codegps.claudePath": {
+          "type": "string",
+          "default": "claude",
+          "description": "Path to the Claude Code CLI used to run the tracer."
+        },
+        "codegps.scriptsDir": {
+          "type": "string",
+          "default": "",
+          "description": "Directory holding verify_trace.py and symbol_at.py. Empty = the copies bundled inside the extension."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
