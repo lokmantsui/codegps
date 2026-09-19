@@ -56,10 +56,14 @@ def main() -> int:
         return 1
     qualname, start, end = found
     rel = str(file_path.resolve().relative_to(repo_path.resolve()))
+    lines = src.splitlines()
+    line_text = lines[line_arg - 1].strip() if 0 < line_arg <= len(lines) else ""
     print(json.dumps({
         "symbol": f"{module_path(repo_path, file_path)}:{qualname}",
         "file": rel,
         "lines": [start, end],
+        "cursor_line": line_arg,
+        "line_text": line_text,
     }))
     return 0
 

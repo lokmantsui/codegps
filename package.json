@@ -57,6 +57,11 @@
           "type": "string",
           "default": "",
           "description": "Directory holding verify_trace.py and symbol_at.py. Empty = the copies bundled inside the extension."
+        },
+        "codegps.model": {
+          "type": "string",
+          "default": "",
+          "description": "Model for tracing, passed to `claude --model` (e.g. sonnet, opus, haiku, or a full model id). Empty = Claude Code's default. Requires the tracer subagent's frontmatter to be `model: inherit` for this to apply."
         }
       }
     }

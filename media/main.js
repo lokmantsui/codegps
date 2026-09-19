@@ -11,8 +11,31 @@ $("trace").addEventListener("click", () => {
   }
   setStatus("Working…");
   $("path").innerHTML = "";
-  vscode.postMessage({ type: "trace", start, end, intent: $("intent").value.trim() });
+  vscode.postMessage({
+    type: "trace",
+    start,
+    end,
+    intent: $("intent").value.trim(),
+    model: $("model").value,
+  });
 });
+
+// Append a node as the tracer confirms it, before the final record arrives.
+function appendPartialNode(node) {
+  if (document.querySelector(".node")) {
+    const arrow = document.createElement("div");
+    arrow.className = "edge partial";
+    arrow.textContent = "↓";
+    $("path").appendChild(arrow);
+  }
+  const el = document.createElement("div");
+  el.className = "node partial";
+  el.innerHTML = `<div class="sym">${node.symbol}</div><div class="carries">carries: ${node.carries || ""}</div>`;
+  el.addEventListener("click", () =>
+    vscode.postMessage({ type: "openNode", file: node.file, line: node.line })
+  );
+  $("path").appendChild(el);
+}
 
 function setStatus(text) {
   $("status").textContent = text;
@@ -26,9 +49,11 @@ window.addEventListener("message", (e) => {
     setStatus(msg.text);
   } else if (msg.type === "error") {
     setStatus("⚠ " + msg.text);
+  } else if (msg.type === "partialNode") {
+    appendPartialNode(msg.node);
   } else if (msg.type === "result") {
     setStatus(msg.verifyText.includes("VERIFIED") ? "✓ verified" : "✗ verification failed");
-    renderPath(msg.record);
+    renderPath(msg.record); // replaces the streamed partials with the verified path
   } else if (msg.type === "list") {
     renderSaved(msg.traces);
   }
